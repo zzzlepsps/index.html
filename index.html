@@ -2,114 +2,109 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <title>Наше звёздное небо 💫</title>
+  <title>Цветок воспоминаний 🌸</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    html, body { margin:0; height:100%; background:#000; overflow:hidden; font-family:'Segoe Script', cursive; }
-    #infoBox { position:absolute; display:none; pointer-events:none; background:rgba(0,0,0,0.7); color:#fff; padding:8px 12px; border-radius:8px; font-size:1rem; transform:translate(-10px,-40px);}
-    #title { position:absolute; top:15px; right:25px; color:#ffd54f; font-size:1.4rem;}
+    body {
+      margin: 0;
+      height: 100vh;
+      background: radial-gradient(circle at center, #ffeefc, #ffd6e0);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      font-family: "Segoe Script", cursive;
+      color: #6b1f4f;
+    }
+    h1 {
+      margin-bottom: 10px;
+      font-size: 1.6rem;
+    }
+    #flower {
+      position: relative;
+      width: 240px;
+      height: 240px;
+      margin-top: 20px;
+      animation: appear 1.2s ease;
+    }
+    @keyframes appear {
+      from { transform: scale(0); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+    .petal {
+      position: absolute;
+      width: 100px;
+      height: 140px;
+      background: pink;
+      border-radius: 50% 50% 0 0;
+      transform-origin: bottom center;
+      cursor: pointer;
+      transition: transform 0.5s, background 0.3s;
+    }
+    .petal:hover {
+      background: #ff9eb5;
+      transform: scale(1.05) rotate(var(--angle));
+    }
+    #center {
+      position: absolute;
+      width: 70px;
+      height: 70px;
+      background: #ffccf0;
+      border-radius: 50%;
+      top: 85px;
+      left: 85px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+    }
+    #messageBox {
+      position: absolute;
+      bottom: 15px;
+      text-align: center;
+      font-size: 1.1rem;
+      width: 90%;
+      color: #4a1840;
+      animation: fade 0.5s;
+    }
+    @keyframes fade {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
   </style>
 </head>
 <body>
-  <div id="infoBox"></div>
-  <div id="title">★ Наши звёзды любви ★</div>
+  <h1>🌸 Наш цветок воспоминаний 🌸</h1>
+  <div id="flower">
+    <div class="petal" style="--angle: 0deg; transform: rotate(0deg) translateY(-50%);" data-text="💞 5 мая — наше первое свидание"></div>
+    <div class="petal" style="--angle: 60deg; transform: rotate(60deg) translateY(-50%);" data-text="🌷 17 июня — первый поцелуй"></div>
+    <div class="petal" style="--angle: 120deg; transform: rotate(120deg) translateY(-50%);" data-text="🌸 22 июля — день на море"></div>
+    <div class="petal" style="--angle: 180deg; transform: rotate(180deg) translateY(-50%);" data-text="💐 1 января — Новый год вместе"></div>
+    <div class="petal" style="--angle: 240deg; transform: rotate(240deg) translateY(-50%);" data-text="🌼 17 октября — год вместе"></div>
+    <div class="petal" style="--angle: 300deg; transform: rotate(300deg) translateY(-50%);" data-text="🌹 И много счастливых дней впереди"></div>
+    <div id="center">💗</div>
+  </div>
+  <div id="messageBox">Нажми на лепесток 🌸</div>
 
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.161.0/examples/js/controls/OrbitControls.js"></script>
-
- <script src="https://telegram.org/js/telegram-web-app.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.161.0/examples/js/controls/OrbitControls.js"></script>
-
-<script>
-  // Telegram API
-  const tg = window.Telegram?.WebApp;
-  if (tg) {
-    tg.expand();
-    tg.MainButton.text = "Закрыть 💕";
-    tg.MainButton.show();
-    tg.MainButton.onClick(() => tg.close());
-  }
-
-  // === 1. Немного подождём пока Telegram задаст размеры ===
-  window.addEventListener("load", () => {
-    setTimeout(initStars, 300);
-  });
-
-  function initStars() {
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 2000);
-    camera.position.set(0, 0, 200);
-    
-    const renderer = new THREE.WebGLRenderer({ antialias: true });
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    document.body.appendChild(renderer.domElement);
-
-    // Обновляем при изменении размера
-    window.addEventListener("resize", () => {
-      camera.aspect = window.innerWidth / window.innerHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(window.innerWidth, window.innerHeight);
-    });
-
-    // === Звёзды ===
-    const starGeo = new THREE.BufferGeometry();
-    const starCount = 2000;
-    const pos = new Float32Array(starCount * 3);
-    for (let i = 0; i < starCount * 3; i++) pos[i] = (Math.random() - 0.5) * 2000;
-    starGeo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-    const starMat = new THREE.PointsMaterial({ color: 0xffffff, size: 1.2 });
-    const stars = new THREE.Points(starGeo, starMat);
-    scene.add(stars);
-
-    // === Памятные звезды ===
-    const memories = [
-      { text: "💫 5 мая — первое свидание", color: 0xff6b81 },
-      { text: "🌙 17 июня — первый поцелуй", color: 0xffd700 },
-      { text: "💞 22 июля — море", color: 0x7fff00 },
-      { text: "🌟 1 января — Новый год", color: 0x87cefa },
-      { text: "💖 17 октября — год вместе", color: 0xff1493 }
-    ];
-
-    const spheres = [];
-    const geo = new THREE.SphereGeometry(6, 24, 24);
-    memories.forEach((m, i) => {
-      const mat = new THREE.MeshBasicMaterial({ color: m.color });
-      const s = new THREE.Mesh(geo, mat);
-      const angle = (i / memories.length) * Math.PI * 2;
-      s.position.set(Math.cos(angle) * 80, Math.sin(angle) * 80, 0);
-      s.userData = { text: m.text };
-      scene.add(s);
-      spheres.push(s);
-    });
-
-    const raycaster = new THREE.Raycaster();
-    const mouse = new THREE.Vector2();
-    const info = document.getElementById("infoBox");
-    window.addEventListener("mousemove", e => {
-      mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
-      mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
-      raycaster.setFromCamera(mouse, camera);
-      const hit = raycaster.intersectObjects(spheres);
-      if (hit.length > 0) {
-        info.style.display = "block";
-        info.style.left = e.clientX + "px";
-        info.style.top = e.clientY + "px";
-        info.textContent = hit[0].object.userData.text;
-      } else info.style.display = "none";
-    });
-
-    // === Анимация ===
-    function animate() {
-      requestAnimationFrame(animate);
-      stars.rotation.y += 0.0007;
-      spheres.forEach((s, i) => s.rotation.y += 0.01 + i * 0.002);
-      renderer.render(scene, camera);
+  <script>
+    const tg = window.Telegram?.WebApp;
+    if (tg) {
+      tg.expand();
+      tg.MainButton.text = "Закрыть 🌷";
+      tg.MainButton.show();
+      tg.MainButton.onClick(() => tg.close());
     }
-    animate();
-  }
-</script>
 
+    const petals = document.querySelectorAll(".petal");
+    const msgBox = document.getElementById("messageBox");
+
+    petals.forEach(p => {
+      p.addEventListener("click", () => {
+        msgBox.textContent = p.dataset.text;
+      });
+    });
+  </script>
 </body>
 </html>
