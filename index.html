@@ -2,109 +2,64 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <title>Цветок воспоминаний 🌸</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Наш цветок воспоминаний</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     body {
       margin: 0;
       height: 100vh;
-      background: radial-gradient(circle at center, #ffeefc, #ffd6e0);
       display: flex;
       flex-direction: column;
-      align-items: center;
       justify-content: center;
+      align-items: center;
+      background: radial-gradient(circle at top, #ffe4ec, #ffcad4, #ffb3c1);
+      font-family: 'Comic Neue', cursive;
       overflow: hidden;
-      font-family: "Segoe Script", cursive;
-      color: #6b1f4f;
     }
+
     h1 {
-      margin-bottom: 10px;
-      font-size: 1.6rem;
+      position: absolute;
+      top: 50px;
+      font-size: 26px;
+      color: #73264d;
+      text-shadow: 1px 1px 2px #fff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
-    #flower {
+
+    h1 span {
+      font-size: 20px;
+    }
+
+    .flower {
       position: relative;
-      width: 240px;
-      height: 240px;
-      margin-top: 20px;
-      animation: appear 1.2s ease;
+      width: 250px;
+      height: 250px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
-    @keyframes appear {
-      from { transform: scale(0); opacity: 0; }
-      to { transform: scale(1); opacity: 1; }
-    }
+
     .petal {
       position: absolute;
       width: 100px;
-      height: 140px;
-      background: pink;
-      border-radius: 50% 50% 0 0;
+      height: 160px;
+      background: radial-gradient(circle at top, #ffc6d0 20%, #ff9eb5 90%);
+      border-radius: 60% 60% 40% 40% / 80% 80% 40% 40%;
       transform-origin: bottom center;
+      box-shadow: 0 0 10px rgba(255, 192, 203, 0.6);
       cursor: pointer;
-      transition: transform 0.5s, background 0.3s;
+      transition: all 0.4s ease;
     }
+
     .petal:hover {
-      background: #ff9eb5;
-      transform: scale(1.05) rotate(var(--angle));
-    }
-    #center {
-      position: absolute;
-      width: 70px;
-      height: 70px;
-      background: #ffccf0;
-      border-radius: 50%;
-      top: 85px;
-      left: 85px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.9rem;
-    }
-    #messageBox {
-      position: absolute;
-      bottom: 15px;
-      text-align: center;
-      font-size: 1.1rem;
-      width: 90%;
-      color: #4a1840;
-      animation: fade 0.5s;
-    }
-    @keyframes fade {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-  </style>
-</head>
-<body>
-  <h1>🌸 Наш цветок воспоминаний 🌸</h1>
-  <div id="flower">
-    <div class="petal" style="--angle: 0deg; transform: rotate(0deg) translateY(-50%);" data-text="💞 5 мая — наше первое свидание"></div>
-    <div class="petal" style="--angle: 60deg; transform: rotate(60deg) translateY(-50%);" data-text="🌷 17 июня — первый поцелуй"></div>
-    <div class="petal" style="--angle: 120deg; transform: rotate(120deg) translateY(-50%);" data-text="🌸 22 июля — день на море"></div>
-    <div class="petal" style="--angle: 180deg; transform: rotate(180deg) translateY(-50%);" data-text="💐 1 января — Новый год вместе"></div>
-    <div class="petal" style="--angle: 240deg; transform: rotate(240deg) translateY(-50%);" data-text="🌼 17 октября — год вместе"></div>
-    <div class="petal" style="--angle: 300deg; transform: rotate(300deg) translateY(-50%);" data-text="🌹 И много счастливых дней впереди"></div>
-    <div id="center">💗</div>
-  </div>
-  <div id="messageBox">Нажми на лепесток 🌸</div>
-
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script>
-    const tg = window.Telegram?.WebApp;
-    if (tg) {
-      tg.expand();
-      tg.MainButton.text = "Закрыть 🌷";
-      tg.MainButton.show();
-      tg.MainButton.onClick(() => tg.close());
+      transform: scale(1.1) rotate(var(--angle)) translateY(-8px);
+      filter: brightness(1.1);
     }
 
-    const petals = document.querySelectorAll(".petal");
-    const msgBox = document.getElementById("messageBox");
-
-    petals.forEach(p => {
-      p.addEventListener("click", () => {
-        msgBox.textContent = p.dataset.text;
-      });
-    });
-  </script>
-</body>
-</html>
+    .petal:nth-child(1) { transform: rotate(0deg) translateY(-40px); --angle: 0deg; }
+    .petal:nth-child(2) { transform: rotate(60deg) translateY(-40px); --angle: 60deg; }
+    .petal:nth-child(3) { transform: rotate(120deg) translateY(-40px); --angle: 120deg; }
+    .petal:nth-child(4) { transform: rotate(180deg) translateY(-40px); --angle: 180deg; }
