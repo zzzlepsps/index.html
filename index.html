@@ -18,75 +18,98 @@
   <script src="https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.161.0/examples/js/controls/OrbitControls.js"></script>
 
-  <script>
-    // Telegram WebApp API
-    const tg = window.Telegram.WebApp;
+ <script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.161.0/examples/js/controls/OrbitControls.js"></script>
+
+<script>
+  // Telegram API
+  const tg = window.Telegram?.WebApp;
+  if (tg) {
     tg.expand();
-    tg.MainButton.text = "Закрыть 💞";
+    tg.MainButton.text = "Закрыть 💕";
     tg.MainButton.show();
     tg.MainButton.onClick(() => tg.close());
+  }
 
-    // Three.js — сцена
+  // === 1. Немного подождём пока Telegram задаст размеры ===
+  window.addEventListener("load", () => {
+    setTimeout(initStars, 300);
+  });
+
+  function initStars() {
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(60, innerWidth/innerHeight, 0.1, 2000);
-    camera.position.set(0,0,200);
-    const renderer = new THREE.WebGLRenderer({antialias:true});
-    renderer.setSize(innerWidth, innerHeight);
+    const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 2000);
+    camera.position.set(0, 0, 200);
+    
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
 
-    // Звёзды
-    const starsGeo = new THREE.BufferGeometry();
-    const starCount = 2000;
-    const pos = new Float32Array(starCount*3);
-    for (let i=0; i<starCount*3; i++) pos[i] = (Math.random()-0.5)*2000;
-    starsGeo.setAttribute('position', new THREE.BufferAttribute(pos,3));
-    const starsMat = new THREE.PointsMaterial({color:0xffffff, size:1.2});
-    const starField = new THREE.Points(starsGeo, starsMat);
-    scene.add(starField);
+    // Обновляем при изменении размера
+    window.addEventListener("resize", () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
 
-    // Памятные звёзды
+    // === Звёзды ===
+    const starGeo = new THREE.BufferGeometry();
+    const starCount = 2000;
+    const pos = new Float32Array(starCount * 3);
+    for (let i = 0; i < starCount * 3; i++) pos[i] = (Math.random() - 0.5) * 2000;
+    starGeo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+    const starMat = new THREE.PointsMaterial({ color: 0xffffff, size: 1.2 });
+    const stars = new THREE.Points(starGeo, starMat);
+    scene.add(stars);
+
+    // === Памятные звезды ===
     const memories = [
-      {text:"💫 5 мая — первое свидание", color:0xff6b81},
-      {text:"🌙 17 июня — первый поцелуй", color:0xffd700},
-      {text:"💞 22 июля — море", color:0x7fff00},
-      {text:"🌟 1 января — Новый год", color:0x87cefa},
-      {text:"💖 17 октября — год любви", color:0xff1493}
+      { text: "💫 5 мая — первое свидание", color: 0xff6b81 },
+      { text: "🌙 17 июня — первый поцелуй", color: 0xffd700 },
+      { text: "💞 22 июля — море", color: 0x7fff00 },
+      { text: "🌟 1 января — Новый год", color: 0x87cefa },
+      { text: "💖 17 октября — год вместе", color: 0xff1493 }
     ];
-    const spheres=[];
-    const geo=new THREE.SphereGeometry(6,24,24);
-    memories.forEach((m,i)=>{
-      const mat=new THREE.MeshBasicMaterial({color:m.color});
-      const s=new THREE.Mesh(geo,mat);
-      const angle=(i/memories.length)*Math.PI*2;
-      s.position.set(Math.cos(angle)*80,Math.sin(angle)*80,0);
-      s.userData={text:m.text};
+
+    const spheres = [];
+    const geo = new THREE.SphereGeometry(6, 24, 24);
+    memories.forEach((m, i) => {
+      const mat = new THREE.MeshBasicMaterial({ color: m.color });
+      const s = new THREE.Mesh(geo, mat);
+      const angle = (i / memories.length) * Math.PI * 2;
+      s.position.set(Math.cos(angle) * 80, Math.sin(angle) * 80, 0);
+      s.userData = { text: m.text };
       scene.add(s);
       spheres.push(s);
     });
 
-    const raycaster=new THREE.Raycaster();
-    const mouse=new THREE.Vector2();
-    const info=document.getElementById('infoBox');
-    window.addEventListener('mousemove',e=>{
-      mouse.x=(e.clientX/innerWidth)*2-1;
-      mouse.y=-(e.clientY/innerHeight)*2+1;
-      raycaster.setFromCamera(mouse,camera);
-      const hit=raycaster.intersectObjects(spheres);
-      if(hit.length>0){
-        info.style.display='block';
-        info.style.left=e.clientX+'px';
-        info.style.top=e.clientY+'px';
-        info.textContent=hit[0].object.userData.text;
-      } else info.style.display='none';
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
+    const info = document.getElementById("infoBox");
+    window.addEventListener("mousemove", e => {
+      mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+      mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+      raycaster.setFromCamera(mouse, camera);
+      const hit = raycaster.intersectObjects(spheres);
+      if (hit.length > 0) {
+        info.style.display = "block";
+        info.style.left = e.clientX + "px";
+        info.style.top = e.clientY + "px";
+        info.textContent = hit[0].object.userData.text;
+      } else info.style.display = "none";
     });
 
-    function animate(){
+    // === Анимация ===
+    function animate() {
       requestAnimationFrame(animate);
-      starField.rotation.y+=0.0007;
-      spheres.forEach((s,i)=>s.rotation.y+=0.01+i*0.002);
-      renderer.render(scene,camera);
+      stars.rotation.y += 0.0007;
+      spheres.forEach((s, i) => s.rotation.y += 0.01 + i * 0.002);
+      renderer.render(scene, camera);
     }
     animate();
-  </script>
+  }
+</script>
+
 </body>
 </html>
